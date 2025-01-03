@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window id="9999">
+    <defaultcontrol always="true">9001</defaultcontrol>
+    <animation effect="fade" start="0" end="100" time="300">WindowOpen</animation>
+    <animation effect="fade" start="100" end="0" time="300">WindowClose</animation>
+    <controls>
+        <control type="group" id="9001">
+            <animation type="WindowOpen" reversible="false">
+                <effect type="slide" start="0,400" end="0,0" tween="cubic" easing="out" delay="0" time="450"
+                        reversible="false"/>
+                <effect type="fade" start="0" end="100" delay="0" time="350" reversible="false"/>
+            </animation>
+            <animation type="WindowClose" reversible="false">
+                <effect type="slide" start="0,0" end="0,400" tween="cubic" easing="out" delay="0" time="450"
+                        reversible="false"/>
+                <effect type="fade" start="100" end="0" delay="0" time="350" reversible="false"/>
+            </animation>
+            <align>right</align>
+            <bottom>150</bottom>
+            <right>200</right>
+            <orientation>horizontal</orientation>
+            <itemgap>25</itemgap>
+            <height>64</height>
+            <width>auto</width>
+            <!--                             Background -->
+<!--            <control type="image">-->
+<!--                <top>0</top>-->
+<!--                <width>100%</width>-->
+<!--                <height>181</height>-->
+<!--                <texture colordiffuse="DD000000">bg.png</texture>-->
+<!--            </control>-->
+            <control type="grouplist">
+                <control type="button" id="201">
+                    <description>Later Button</description>
+                    <width>auto</width>
+                    <height>64</height>
+                    <aligny>center</aligny>
+                    <right>40</right>
+                    <font>Reg30</font>
+                    <label></label>
+                    <font>font12_title</font>
+                    <textcolor>FFFFFFFF</textcolor>
+                    <texturenofocus>button-nofo.png</texturenofocus>
+                    <texturefocus>button-fo.png</texturefocus>
+                    <textoffsetx>10</textoffsetx>
+                </control>
+            </control>
+        </control>
+    </controls>
+</window>

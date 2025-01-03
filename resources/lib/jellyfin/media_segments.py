@@ -1,0 +1,90 @@
+import json
+from enum import Enum
+from typing import List
+
+class SegmentType(Enum):
+    UNKNOWN = "Unknown"
+    COMMERCIAL = "Commercial"
+    PREVIEW = "Preview"
+    RECAP = "Recap"
+    OUTRO = "Outro"
+    INTRO = "Intro"
+
+class MediaSegmentItem:
+    def __init__(self, itemId: str, item_id: str, segment_type: SegmentType, start_ticks: int, end_ticks: int):
+        self.itemId = itemId
+        self.item_id = item_id
+        self.segment_type = segment_type
+        self.start_ticks = start_ticks
+        self.end_ticks = end_ticks
+
+
+    def get_segment_type_display(self):
+        return self.segment_type.value
+
+    def get_start_seconds(self):
+        return self.ticks_to_seconds(self.start_ticks)
+
+    def get_end_seconds(self):
+        return self.ticks_to_seconds(self.end_ticks)
+
+    @staticmethod
+    def ticks_to_seconds(ticks: int) -> int:
+        return ticks // 10000000
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            itemId=data["Id"],
+            item_id=data["ItemId"],
+            segment_type=SegmentType(data["Type"]),
+            start_ticks=data["StartTicks"],
+            end_ticks=data["EndTicks"]
+        )
+
+    def __str__(self):
+        return f"{self.segment_type} - {self.start_ticks} - {self.end_ticks}"
+
+class MediaSegmentResponse:
+    def __init__(self, items: List[MediaSegmentItem], total_record_count: int, start_index: int):
+        self.items = items
+        self.total_record_count = total_record_count
+        self.start_index = start_index
+
+    def get_next_item(self, current_seconds):
+        smallest_difference = None
+        item_to_return = None
+        for item in self.items:
+            start_seconds = item.get_start_seconds()
+            end_seconds = item.get_end_seconds()
+
+            if start_seconds < current_seconds < end_seconds:
+                return item
+
+            if start_seconds > current_seconds:
+                if not smallest_difference or start_seconds - current_seconds < smallest_difference:
+                    smallest_difference = start_seconds - current_seconds
+                    item_to_return = item
+
+        return item_to_return
+
+    @classmethod
+    def from_json(cls, json_dict: dict):
+        data = json_dict
+        items = [MediaSegmentItem.from_dict(item) for item in data["Items"]]
+        return cls(
+            items=items,
+            total_record_count=data["TotalRecordCount"],
+            start_index=data["StartIndex"]
+        )
+
+    def get_items_by_type(self, segment_type: SegmentType) -> List[MediaSegmentItem]:
+        return [item for item in self.items if item.segment_type == segment_type]
+
+    def __str__(self):
+        json_dict = {
+            "Items": [str(item) for item in self.items],
+            "TotalRecordCount": self.total_record_count,
+            "StartIndex": self.start_index
+        }
+        return json.dumps(json_dict)
