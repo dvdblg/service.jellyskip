@@ -11,6 +11,7 @@ WARNING_LABEL = 205
 CENTER_Y = 6
 CENTER_X = 2
 
+MIN_REMAINING_SECONDS = 5
 
 class CustomDialog(xbmcgui.WindowXMLDialog):
 
@@ -41,7 +42,14 @@ class CustomDialog(xbmcgui.WindowXMLDialog):
             return
 
         if control == OK_BUTTON:
-            player.seekTime(self.seek_time_seconds)
+            remaining_seconds = player.getTotalTime() - self.seek_time_seconds
+
+            # We don't want to skip to the end of the video (give other addons time to play, like nextup service)
+            if remaining_seconds < MIN_REMAINING_SECONDS:
+                player.seekTime(player.getTotalTime() - MIN_REMAINING_SECONDS)
+                self.close()
+            else:
+                player.seekTime(self.seek_time_seconds)
 
         if control in [OK_BUTTON, NEW_BUTTON, DISABLE_BUTTON]:
             self.close()
