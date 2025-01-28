@@ -5,7 +5,7 @@ import player
 import helper.utils as utils
 
 from jellyfin.jellyfin_grabber import JellyfinHack
-from skip_dialogue import CustomDialog
+from skip_dialogue import SkipSegmentDialogue
 from dialogue_handler import dialogue_handler
 
 addonInfo = xbmcaddon.Addon().getAddonInfo
@@ -89,6 +89,7 @@ class JellySkipMonitor(xbmc.Monitor):
 
     def start_tracking(self):
         if not self.player.isPlayingVideo():
+            LOG.info('Not playing video')
             return
 
         time_seconds = self.player.getTime()
@@ -98,6 +99,9 @@ class JellySkipMonitor(xbmc.Monitor):
 
         # No media segments
         if not media_segments:
+            LOG.info('No media segments')
+            # Close any open dialogues, if any
+            dialogue_handler.close_gui()
             return
 
         LOG.info(f"Start tracking: time={time_seconds}, duration={duration_seconds}")
@@ -105,6 +109,9 @@ class JellySkipMonitor(xbmc.Monitor):
         next_item = media_segments.get_next_item(time_seconds)
 
         if not next_item:
+            # Close any open dialogues, if any
+            dialogue_handler.close_gui()
+            LOG.info('Stopping all dialogue, because no next item')
             return
 
         LOG.info(f"Next item: {next_item}")

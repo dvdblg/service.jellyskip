@@ -45,6 +45,17 @@ class MediaSegmentItem:
     def __str__(self):
         return f"{self.segment_type} - {self.start_ticks} - {self.end_ticks}"
 
+    def __eq__(self, other):
+        if not isinstance(other, MediaSegmentItem):
+            return False
+
+        same_item_id = other.item_id == self.item_id
+        same_type = other.segment_type == self.segment_type
+        same_start = other.get_start_seconds() == self.get_start_seconds()
+        same_end = other.get_end_seconds() == self.get_end_seconds()
+
+        return same_item_id and same_type and same_start and same_end
+
 class MediaSegmentResponse:
     def __init__(self, items: List[MediaSegmentItem], total_record_count: int, start_index: int):
         self.items = items

@@ -1,8 +1,9 @@
 import xbmcgui, xbmc
 
-OK_BUTTON = 201
-NEW_BUTTON = 202
-DISABLE_BUTTON = 210
+import helper.utils as utils
+
+OK_BUTTON = 2101
+
 ACTION_PREVIOUS_MENU = 10
 ACTION_BACK = 92
 INSTRUCTION_LABEL = 203
@@ -13,16 +14,41 @@ CENTER_X = 2
 
 MIN_REMAINING_SECONDS = 5
 
-class CustomDialog(xbmcgui.WindowXMLDialog):
+
+class SkipSegmentDialogue(xbmcgui.WindowXMLDialog):
 
     def __init__(self, xmlFile, resourcePath, seek_time_seconds, segment_type):
         self.seek_time_seconds = seek_time_seconds
         self.segment_type = segment_type
+        self.player = xbmc.Player()
 
     def onInit(self):
         skip_label = 'Skip ' + str(self.segment_type)
         skip_button = self.getControl(OK_BUTTON)
         skip_button.setLabel(skip_label)
+        self.schedule_close_action()
+
+    def get_seconds_till_segment_end(self):
+        return self.seek_time_seconds - self.player.getTime()
+
+    def schedule_close_action(self):
+        """
+        Schedule the dialog to close automatically when the segment ends.
+        :return: None
+        """
+
+        seconds_till_segment_end = self.get_seconds_till_segment_end()
+
+        if seconds_till_segment_end > 0:
+            utils.run_threaded(self.on_automatic_close, delay=seconds_till_segment_end, kwargs={})
+
+    def on_automatic_close(self):
+        """
+        Close the dialog automatically. This is called by the scheduled thread.
+        :return: None
+        """
+
+        self.close()
 
     def onAction(self, action):
         if action == ACTION_PREVIOUS_MENU or action == ACTION_BACK:
@@ -35,21 +61,18 @@ class CustomDialog(xbmcgui.WindowXMLDialog):
         pass
 
     def onClick(self, control):
-        player = xbmc.Player()
-
-        if not player.isPlaying():
+        if not self.player.isPlaying():
             self.close()
             return
 
         if control == OK_BUTTON:
-            remaining_seconds = player.getTotalTime() - self.seek_time_seconds
+            remaining_seconds = self.player.getTotalTime() - self.seek_time_seconds
 
             # We don't want to skip to the end of the video (give other addons time to play, like nextup service)
             if remaining_seconds < MIN_REMAINING_SECONDS:
-                player.seekTime(player.getTotalTime() - MIN_REMAINING_SECONDS)
+                self.player.seekTime(self.player.getTotalTime() - MIN_REMAINING_SECONDS)
                 self.close()
             else:
-                player.seekTime(self.seek_time_seconds)
+                self.player.seekTime(self.seek_time_seconds)
 
-        if control in [OK_BUTTON, NEW_BUTTON, DISABLE_BUTTON]:
-            self.close()
+        self.close()

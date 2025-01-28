@@ -22,24 +22,18 @@
             <itemgap>25</itemgap>
             <height>64</height>
             <width>auto</width>
-            <!--                             Background -->
-<!--            <control type="image">-->
-<!--                <top>0</top>-->
-<!--                <width>100%</width>-->
-<!--                <height>181</height>-->
-<!--                <texture colordiffuse="DD000000">bg.png</texture>-->
-<!--            </control>-->
             <control type="grouplist">
-                <control type="button" id="201">
-                    <description>Later Button</description>
+                <control type="button" id="2101">
+                    <description>Skip Segment Button</description>
                     <width>auto</width>
                     <height>64</height>
                     <aligny>center</aligny>
                     <right>40</right>
-                    <font>Reg30</font>
-                    <label></label>
-                    <font>font12_title</font>
+                    <label/>
+                    <font>font12</font>
                     <textcolor>FFFFFFFF</textcolor>
+                    <focusedcolor>FFFFFFFF</focusedcolor>
+                    <shadowcolor>00000000</shadowcolor>
                     <texturenofocus>button-nofo.png</texturenofocus>
                     <texturefocus>button-fo.png</texturefocus>
                     <textoffsetx>10</textoffsetx>
