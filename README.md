@@ -6,16 +6,27 @@ For example use [intro-skipper](https://github.com/intro-skipper/intro-skipper) 
 Then install this addon in Kodi alongside [jellyfin kodi](https://github.com/jellyfin/jellyfin-kodi) addon to skip the intro segments.
 
 
-## Features
+## Usage
 
-- Simplistic design
-- Presents a button to skip media segments (e.g., intro, outro)
+
+<details> 
+  <summary>Presents a button to skip media segments (e.g., intro, outro)</summary>
+    <img src="https://i.imgur.com/hL62YyN.png" alt=""/>
+</details>
+
+## Requirements
+- *Jellyfin Server 10.10.0* or later (with Media Segments API enabled)
+- Manually or automatically created media segments in Jellyfin (e.g., intro, outro)
+- *Jellyfin-Kodi* addon installed and configured
+- Jellyfin instance reachable from Kodi
 
 ## Installation
 
-1. Download the repository.
+1. Download the addon code (the repository zip).
 2. Place the `service.jellyskip` folder in your Kodi `addons` directory.
-3. Restart Kodi.
+3. (Re)start Kodi.
+4. Enable/Install the addon.
+5. Enjoy!
 
 ## Usage
 
@@ -41,7 +52,7 @@ The current version is very simple and includes the following planned improvemen
 
 ## Potential Issues
 
-**Tested using native paths only!**
+**Tested using native paths only and on Kodi Version 21.2! Experience may vary on other versions**
 
 **Quickly thrown together, proof of concept!**
 
