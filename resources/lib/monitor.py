@@ -46,8 +46,14 @@ class JellySkipMonitor(xbmc.Monitor):
         jf_hack.reset_itemid()
         dialogue_handler.cancel_scheduled()
 
+    def _event_handler_jellyskip_dialogue_closed(self, **_kwargs):
+        LOG.info('JellySkipMonitor: player dialogue closed event')
+        # User closed dialogue, now we want to start tracking only the next upcoming segment
+        self.start_tracking(only_upcoming=True)
+
     EVENTS_MAP = {
         'Other.UserDataChanged': jf_hack.event_handler_jellyfin_userdatachanged,
+        'Other.Jellyskip.DialogueClosed': _event_handler_jellyskip_dialogue_closed,
         # 'Player.OnPause': _event_handler_player_change_playback,
         'Player.OnResume': _event_handler_player_change_playback,
         # 'Player.OnSpeedChanged': _event_handler_player_change_playback,
@@ -66,7 +72,6 @@ class JellySkipMonitor(xbmc.Monitor):
         sender = utils.from_bytes(sender)
         method = utils.from_bytes(method)
         data = utils.from_bytes(data) if data else ''
-
         handler = JellySkipMonitor.EVENTS_MAP.get(method)
         if not handler:
             return
@@ -87,7 +92,7 @@ class JellySkipMonitor(xbmc.Monitor):
             jf_hack._fetch_media_segments()
             self.start_tracking()
 
-    def start_tracking(self):
+    def start_tracking(self, only_upcoming=False):
         if not self.player.isPlayingVideo():
             LOG.info('Not playing video')
             return
@@ -106,7 +111,7 @@ class JellySkipMonitor(xbmc.Monitor):
 
         LOG.info(f"Start tracking: time={time_seconds}, duration={duration_seconds}")
 
-        next_item = media_segments.get_next_item(time_seconds)
+        next_item = media_segments.get_next_item(time_seconds, only_upcoming)
 
         if not next_item:
             # Close any open dialogues, if any

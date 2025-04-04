@@ -62,14 +62,25 @@ class MediaSegmentResponse:
         self.total_record_count = total_record_count
         self.start_index = start_index
 
-    def get_next_item(self, current_seconds):
+    def get_next_item(self, current_seconds, only_upcoming=False):
+        """
+        Get the next item in the list based on the current time in seconds.
+        If only_upcoming is True, it will only return upcoming items.
+        If only_upcoming is False, it will return the first item that is currently playing or the next upcoming item.
+        E.g. if the current time is 10 seconds and the next item starts at 20 seconds, it will return that item.
+        If the current time is 10 seconds and an item starts at 5 seconds and ends at 15 seconds, it will return that item only if only_upcoming is false.
+
+        :param current_seconds: The current time in seconds.
+        :param only_upcoming: If True, only return upcoming items. If False, return the first item that is currently playing or the next upcoming item.
+        :return: The next item in the list based on the current time in seconds.
+        """
         smallest_difference = None
         item_to_return = None
         for item in self.items:
             start_seconds = item.get_start_seconds()
             end_seconds = item.get_end_seconds()
 
-            if start_seconds < current_seconds < end_seconds:
+            if start_seconds < current_seconds < end_seconds and not only_upcoming:
                 return item
 
             if start_seconds > current_seconds:

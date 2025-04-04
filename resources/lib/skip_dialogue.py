@@ -1,6 +1,7 @@
 import xbmcgui, xbmc
 
 import helper.utils as utils
+from helper import LazyLogger
 
 OK_BUTTON = 2101
 
@@ -13,7 +14,7 @@ CENTER_Y = 6
 CENTER_X = 2
 
 MIN_REMAINING_SECONDS = 5
-
+LOG = LazyLogger(__name__)
 
 class SkipSegmentDialogue(xbmcgui.WindowXMLDialog):
 
@@ -49,6 +50,10 @@ class SkipSegmentDialogue(xbmcgui.WindowXMLDialog):
         """
 
         self.close()
+
+        LOG.info("JellySkip: Auto closing dialogue")
+        sender = "service.jellyskip"
+        xbmc.executebuiltin("NotifyAll(%s, %s, %s)" % (sender, "Jellyskip.DialogueClosed", {}))
 
     def onAction(self, action):
         if action == ACTION_PREVIOUS_MENU or action == ACTION_BACK:

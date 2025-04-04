@@ -23,7 +23,7 @@ class JellySkipPlayer(xbmc.Player):
 
     def __init__(self, monitor):
         xbmc.Player.__init__(self)
-        self.monitor = monitor
+        self.jellyskip_monitor = monitor
 
     def onPlayBackStarted(self):
         LOG.info("Playback started")
